@@ -411,7 +411,7 @@ for ( i = 0; i < 500 ; i++ ) {
 			"text"		:words[randomRange(0, words.length-1)],
 			"emotion"	:emotion[randomRange(0, emotion.length-1)],
 			"size"		:randomRange(0, 100)
-		}
+		} 
 	)
 }
 
