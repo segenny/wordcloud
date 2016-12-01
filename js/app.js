@@ -400,43 +400,55 @@
   else (d3.layout || (d3.layout = {})).cloud = cloud;
 })();
 
+var emotion = ["긍정", "부정", "기타", "화남"];
 
-var frequency_list = [{"text":"study","size":40}, {"text":"study1","size":10}];
+var frequency_list = [];
 
-    var color = d3.scale.linear()
-            .domain([0,1,2,3,4,5,6,10,15,20,100])
-            .range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
- 
-    d3.layout.cloud().size([800, 300])
-            .words(frequency_list)
-            .rotate(0)
-            .fontSize(function(d) { return d.size; })
-            .on("end", draw)
-            .start();
+for ( i = 0; i < 500 ; i++ ) {
+	
+	frequency_list.push (
+		{
+			"text"		:words[randomRange(0, words.length-1)],
+			"emotion"	:emotion[randomRange(0, emotion.length-1)],
+			"size"		:randomRange(0, 100)
+		}
+	)
+}
 
-    function draw(words) {
-        d3.select("#wordSpace").append("svg")
-                .attr("width", 850) 
-                .attr("height", 350)
-                .attr("class", "wordcloud")
-                .append("g")
-                // without the transform, words words would get cutoff to the left and top, they would appear outside of the SVG area
-                .attr("transform", "translate(320,200)")
-                .selectAll("text")
-                .data(words)
-                .enter().append("text") 
-                .style("font-size", function(d) { return d.size + "px"; })
-                .style("fill", function(d, i) { return color(i); }) 
-                .attr("transform", function(d) {
-                    return "translate(" + [randomRange(850,0), randomRange(350,0)] + ")rotate(" + d.rotate + ")";
-                })
-                .transition()
-			          .duration(1500)
-                .attr("transform", function(d) {
-                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-                })
-                .text(function(d) { return d.text; });
-    }
-    function randomRange(n1, n2) {
-      return Math.floor( (Math.random() * (n2 - n1 + 1)) + n1 );
-    }
+var color = d3.scale.linear()
+		.domain([0, 100])
+		.range(["#4169e1", "white"]);
+
+d3.layout.cloud().size([800, 300])
+		.words(frequency_list)
+		.rotate(0)
+		.fontSize(function(d) { return d.size; })
+		.on("end", draw)
+		.start();
+
+function draw(words) {
+	d3.select("#wordSpace").append("svg")
+			.attr("width", 850) 
+			.attr("height", 350)
+			.attr("class", "wordcloud")
+			.append("g")
+			// without the transform, words words would get cutoff to the left and top, they would appear outside of the SVG area
+			.attr("transform", "translate(320,200)")
+			.selectAll("text")
+			.data(words)
+			.enter().append("text") 
+			.style("font-size", function(d) { return d.size + "px"; })
+			.style("fill", function(d, i) { return color(i); }) 
+			.attr("transform", function(d) {
+				return "translate(" + [randomRange(850,0), randomRange(350,0)] + ")rotate(" + d.rotate + ")";
+			})
+			.transition()
+				  .duration(1500)
+			.attr("transform", function(d) {
+				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+			})
+			.text(function(d) { return d.text; });
+}
+function randomRange(n1, n2) {
+  return Math.floor( (Math.random() * (n2 - n1 + 1)) + n1 );
+}
