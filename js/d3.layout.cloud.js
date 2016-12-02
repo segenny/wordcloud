@@ -53,32 +53,57 @@ module.exports = function() {
     step();
 
     return cloud;
+	  
+	
 
     function step() {
       var start = Date.now();
       while (Date.now() - start < timeInterval && ++i < n && timer) {
         var d = data[i];
-		  
-        //d.x = ((size[0]/2) * (random() + .5)) >> 1 + (d.emotion=="긍정")? 0 : size[0]/2;
-		if ( d.emotion==="긍정" || d.emotion==="화남" ){
-			d.x = Math.floor( (Math.random() * ((size[0]/2) - 0 + 1)) + 0 );
-			//d.x -= Math.floor((Math.random() * 300));
-		}else {
-			d.x = Math.floor( (Math.random() * (size[0] - (size[0]/2) + 1)) + (size[0]/2) );	
+		 
+		var debug = true;
+		if (debug) {
+			//d.x = ((size[0]/2) * (random() + .5)) >> 1 + (d.emotion=="긍정")? 0 : size[0]/2;
 			
-			//d.x -= Math.floor((Math.random() * 300));
+			/*if ( d.emotion==="긍정" || d.emotion==="화남" ){
+				d.x = Math.floor( (Math.random() * ((size[0]/2) - 0 + 1)) + 0 );
+				//d.x -= Math.floor((Math.random() * 300));
+				d.x = 300;
+			}else if ( d.emotion==="화남" ) {
+				d.x = 600;
+			}else {
+				d.x = Math.floor( (Math.random() * (size[0] - (size[0]/2) + 1)) + (size[0]/2) );	
+				//d.x -= Math.floor((Math.random() * 300));
+				d.x = 800;
+			}
+
+			if ( d.emotion==="긍정" || d.emotion==="기타" ){
+				d.y = Math.floor( (Math.random() * ((size[1]/2) - 0 + 1)) + 0 );
+				//d.y = 0 + 100;
+			}else if ( d.emotion==="화남" ) {
+				d.y = 500;
+			}else {
+				d.y = Math.floor( (Math.random() * (size[1] - (size[1]/2) + 1)) + (size[1]/2) );	
+			}*/
+			
+			if ( d.emotion==="긍정" ){
+				d.x = 700;	
+			} else if ( d.emotion==="부정" ) {
+				d.x = 800;	
+			} else if ( d.emotion==="화남" ) {
+				d.x = 1000;	
+			} else {
+				d.x = 1100;	
+			}
+			d.y = 500;
+			
+			
+		} else {
+			d.x = (size[0] * (random() + .5)) >> 1;
+			d.y = (size[1] * (random() + .5)) >> 1;
 		}
-		
-        if ( d.emotion==="긍정" || d.emotion==="기타" ){
-			d.y = Math.floor( (Math.random() * ((size[1]/2) - 0 + 1)) + 0 );
-			//d.y = 0 + 100;
-		}else {
-			d.y = Math.floor( (Math.random() * (size[1] - (size[1]/2) + 1)) + (size[1]/2) );	
-			//d.y = size[1] - 100;
-		}
+        
 		//d.y = (size[1] * (random() + .5)) >> 1;
-		//d.x = (size[0] * (random() + .5)) >> 1;
-        //d.y = (size[1] * (random() + .5)) >> 1;
         cloudSprite(contextAndRatio, d, data, i);
         if (d.hasText && place(board, d, bounds)) {
           tags.push(d);
