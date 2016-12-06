@@ -5,7 +5,7 @@ var emotion = ["긍정", "부정", "기타", "화남"];
 
 var frequency_list = [];
 
-for ( i = 0; i < 100 ; i++ ) {
+for ( i = 0; i < 20 ; i++ ) {
 	
 	frequency_list.push ({
 			"text"		:words[randomRange(0, words.length-1)],
@@ -21,7 +21,7 @@ for ( i = 0; i < 100 ; i++ ) {
 	)
 }
 
-for ( i = 0; i < 100 ; i++ ) {
+for ( i = 0; i < 150 ; i++ ) {
 	frequency_list.push ({
 			"text"		:words[randomRange(0, words.length-1)],
 			"emotion"	:"부정",//"emotion[randomRange(0, emotion.length-1)]",
@@ -66,11 +66,23 @@ for ( i = 0; i < 5 ; i++ ) {
 	)
 }
 
-	
+
 var color1 = d3.scale.linear()
 							.domain([10,0])
 							.range(["#FF0000", "#F00000"]);	
 
+var word_entries = d3.entries(frequency_list);
+var xScale = d3.scale.linear()
+	   .domain([0, d3.max(word_entries, function(d) {
+		  return d.value.size;
+		})
+	   ])
+	   .range([1,50]);
+
+frequency_list.map(function(d,i) 
+{ 
+	 d.size = xScale(d.size);
+})
 
 /*var color = d3.scale.linear()
 		.domain([100, 0])
@@ -87,7 +99,7 @@ d3.layout.cloud().size([screen_w, screen_h])
 		//.rotate(return ~~(Math.random() * 2) * 90)
 		.rotate(0)
 		//.rotate(function() { return ~~(Math.random() * 2) * 90; })
-		.padding(3)
+		.padding(5)
 		.font('monospace')
 		.fontSize(function(d) { return d.size; })
 		.spiral("archimedean")
@@ -97,20 +109,54 @@ d3.layout.cloud().size([screen_w, screen_h])
 		.start();
 
 function draw(words) {
-	d3.select("#wordSpace").append("svg")
-			.attr("width", screen_w) 
-			.attr("height", screen_h)
-			.attr("class", "wordcloud")
-			.append("g")
+	
+	var svg = d3.select("#wordSpace")
+				.append("svg")
+				.attr("width", screen_w) 
+				.attr("height", screen_h)
+				.attr("class", "wordcloud");
+	
+	var filter = svg.append("defs")
+				  	.append("filter")
+					.attr("id", "blur")
+				  	.append("feGaussianBlur")
+					.attr("stdDeviation", 2);
+
+	svg.append("g")
 			//.attr("transform", "translate(944,529)")
 			// without the transform, words words would get cutoff to the left and top, they would appear outside of the SVG area
-			.attr("transform", "translate("+Math.floor(screen_w/2)+","+Math.floor(screen_h/2)+")")
+			.attr("transform", "translate("+Math.floor(screen_w/2)+","+Math.floor(screen_h/2)+") scale(1)")
+
+			.selectAll("circle")
+			.data(words)
+			.enter().append("circle")
+			.transition()
+			.duration(function(d,i){return i*10;})
+			.attr("r", function(d) { return d.size+20; })
+			.attr("stroke-width", function(d) { return d.size; })
+			.attr("stroke", function(d, i) { return d.color(d.size); })
+			.attr("stroke-opacity", function(d, i) { return 0.5; })
+//			.attr('opacity', function(d) { return 0.3; })
+			.attr("opacity", function(d, i) { return 0.15; })
+			.attr("fill", function(d, i) { return d.color(d.size); })
+			.attr("transform", function(d) {
+				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+			})
+			.attr("filter", "url(#blur)");
+			;
+	
+	svg.append("g")
+			//.attr("transform", "translate(944,529)")
+			// without the transform, words words would get cutoff to the left and top, they would appear outside of the SVG area
+			.attr("transform", "translate("+Math.floor(screen_w/2)+","+Math.floor(screen_h/2)+") scale(1)")
 			.selectAll("text")
 			.data(words)
 			.enter().append("text")
+			
 			.attr("text-anchor", "middle")
 			.attr('opacity', function(d) { return 1; })
 			.style("font-family", function(d) { return "Impact"; }) 
+			.style("font-weight", function(d) { return "bold"; }) 
 			.style("fill", function(d, i) { return d.color(d.size); })
 			
 			.attr("transform", function(d) {
